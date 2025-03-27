@@ -31,49 +31,30 @@ revision-reminder/
 🔧 Setup Instructions
 Clone the Repository:
 
-sh
-Copy
-Edit
 git clone https://github.com/yourusername/revision-reminder.git  
 cd revision-reminder
 Set Up a Virtual Environment (Optional but recommended):
 
-sh
-Copy
-Edit
+
 python -m venv venv
 source venv/bin/activate  # (For Mac/Linux)
 venv\Scripts\activate  # (For Windows)
 Install Dependencies:
 
-sh
-Copy
-Edit
 pip install -r requirements.txt  
 🚀 Usage
 Adding a Question:
 
-sh
-Copy
-Edit
 python main.py add "What is Dijkstra's Algorithm?" "Graph algorithm for shortest paths"
 Fetching Due Revisions:
 
-sh
-Copy
-Edit
 python main.py review
 Deleting an Entry:
 
-sh
-Copy
-Edit
 python main.py delete <id>
 Running the Reminder:
 
-sh
-Copy
-Edit
+
 python reminder.py
 📝 Future Enhancements
 GUI version using Tkinter
