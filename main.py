@@ -1,49 +1,92 @@
-from database import add_questions,fetch_for_rev,init_db,del_entry
+import streamlit as st 
+from database import update_review,add_questions,fetch_for_rev,del_entry,debug_dump
+import datetime 
 
-def main():
-    init_db()
-    while True:
-        print("Revision Tracker menu")
-        print("1- Add questions")
-        print("2- view questions due for revision")
-        print("3- To delete a specific entry")
-        print("4- To exit")
+st.title("Revision Tracker")
 
-        choice=input("Enter a choice (1-4)")
+menu=["Add questions","Review Questions","Delete Questions","Review Schedule"]
+choice=st.sidebar.selectbox("Menu",menu)
 
-        if choice=='1':
-            question=input("Enter the question")
-            description=input("Enter the description of the question (optional)")
+if choice=="Add questions":
+    st.subheader("Add a Question")
 
-            add_questions(question,description)
+    question=st.text_input("Enter the question")
+    description=st.text_area("Enter description/explanation/URL of the question(This is optional)")
+    difficulty=st.selectbox("Select difficulty",["Easy","Medium","Hard"])
 
-            print("Successfully added")
+    if st.button("Add Question"):
+        add_questions(question,difficulty,description)
+        st.success("Succesfully added")
 
-        elif choice=="2":
-            my_ques=fetch_for_rev()
+elif choice=="Review Questions":
+    st.subheader("Revise a Question")
 
-            if my_ques:
-                print("The questions are")    
-                for i,q,d in my_ques:
-                    print(f"{i}- {q}")
-                    print(f"- {d}")
-            else:
-                print("No questions") 
+    questions=fetch_for_rev()
+    if questions:
+        for q in questions:
+            id,ques,desc,_=q
+            st.markdown(f"**ID:** {id}")
+            st.markdown(f"**Question:** {ques}") 
+            st.markdown(f"**Description:** {desc}")
 
-        elif choice=='3':
-            print("Enter the id of the question that you want to delete")
-            id=int(input())
-            del_entry(id)
-            print("Entry is successfully deleted")
 
-        elif choice=='4':
-            print("Exiting....")        
-            break 
+            quality=st.radio(f"Rate your recall for this question (ID:{id})",[0,1,2,3,4,5],key=id)
+            if st.button(f"Submit Review for the question ID: {id}"):
+                update_review(quality,id)
+                st.success("Review Updated") 
+    else:
+        st.info("No questions due for review today!")            
+elif choice=="Delete Questions":
+    st.subheader("Delete a Question")
 
-        else:
-            print("Invalid input")
+    id=st.text_input("Enter the id the of the question you want to delete")
 
-if __name__=="__main__":
-    main()            
+    if st.button("Delete Entry"):
+        del_entry(id) 
+        st.info("Entry Deleted")
+
+elif choice=="Review Schedule":
+    st.subheader("Review Schedule")
+
+    questions = debug_dump()
+
+    if questions:
+        st.markdown("""
+            <style>
+                .ques_sty {
+                    background-color:#242124;
+                    padding: 16px;
+                    border-radius: 12px;
+                    margin-bottom: 12px;                
+                }
+            </style>
+        """, unsafe_allow_html=True)
+
+        for q in questions:
+            try:
+                id, ques, desc, added_date, next_rev_date = q
+                st.markdown(f"""
+                    <div class="ques_sty">
+                        <strong>ID:</strong> {id}<br>
+                        <strong>Added Date:</strong> {added_date}<br>
+                        <strong>Next Review Date:</strong> {next_rev_date}<br>
+                        <strong>Question:</strong> {ques}<br>
+                        <strong>Description:</strong> {desc}
+                    </div>
+                """, unsafe_allow_html=True)
+            except Exception as e:
+                st.error(f"Error displaying question: {e}")
+    else:
+        st.info("No questions found.")
+
+
+
+
+
+            
+
+
+
+
 
 
