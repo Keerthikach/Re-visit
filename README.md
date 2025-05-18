@@ -77,24 +77,19 @@ Prints the full contents of the table (useful for debugging/testing).
 
 ## 🖥️ Streamlit Frontend
 
-The Streamlit app provides an interactive user interface. On launch, it shows:
+The project includes a lightweight, intuitive Streamlit frontend to manage spaced repetition questions efficiently. Here's a breakdown of the features provided through the interface:
 
-### 1. **Add a New Question**
+➕ Add Question:
+Allows users to add new questions along with descriptions. The initial review date is set based on the SM-2 algorithm logic, and tracked automatically.
 
-* Text input for the question
-* Optional field for description
-* Difficulty level selector
-* Submit button to add the item to the database
+✅ Review Questions:
+Displays questions that are due for review today based on SM-2 scheduling. Users can rate each question based on difficulty after recalling it. This feedback updates the next review date dynamically.
 
-### 2. **Review Questions Due Today**
+🗑️ Delete Question:
+Offers a searchable list of all stored questions with the option to delete any of them cleanly from the database. Useful for removing outdated or irrelevant entries.
 
-* Lists all questions fetched via `fetch_for_rev()`
-* For each question, displays:
-
-  * The question text
-  * Optional description
-  * Radio buttons (0-5) to record your recall quality
-* On form submission, applies `update_review()` for each reviewed question
+📅 Review Schedule:
+Shows an overview of all stored questions and their next scheduled review date. Helps users plan upcoming revisions and ensure spaced repetition is on track.
 
 ---
 
@@ -107,16 +102,24 @@ This script runs in the background to show reminders via Windows 10 toast notifi
   * Calls `fetch_for_rev()` to find due questions
   * Displays each question as a toast notification
 
-### 🔄 Automation with Windows Task Scheduler
+## Automation with Batch File & Task Scheduler
+To ensure review reminders trigger without keeping the app always running, the project smartly uses:
 
-You can schedule `reminder.py` to:
+A custom Batch File (reminder.bat)
+This batch script:
 
-* Run on system login
-* Use the correct interpreter (`venv`-based Python 3.11)
-* Show toast notifications silently in the background
+Navigates to the project directory
 
-Configuration tip: Check "Run only when user is logged in" to allow UI interactions (like notifications).
+Runs the reminder script (reminder.py) using the appropriate Python interpreter
 
+# Windows Task Scheduler
+The batch file is registered with Task Scheduler to:
+
+Run the script at login or at fixed intervals
+
+Ensure reminders are shown even after reboot
+
+Avoid the need for a 24/7 background process or custom daemon
 ---
 
 ## 📊 How SM-2 Algorithm Works
@@ -185,18 +188,7 @@ streamlit run main.py
 
 ---
 
-## 🔮 Future Enhancements
-
-* Full-fledged dashboard showing review history
-* Export/import questions to JSON or CSV
-* Auto backup of review database
-* Desktop app version using `tkinter` or `Electron`
-* Night mode and user profiles
-
----
-
 ## 🙌 Final Notes
 
 This reminder system is a productivity tool designed to help learners and students stay consistent with revision and retention. By using proven cognitive science principles and simple automation, it helps make learning more efficient and sustainable.
 
-Happy learning! 🚀
